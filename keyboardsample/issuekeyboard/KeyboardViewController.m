@@ -137,10 +137,46 @@
     // This result show us that `documentContextBeforeInput` gave us right length
 }
     
+//@protocol UIKeyInput <UITextInputTraits>
+//
+//#if UIKIT_DEFINE_AS_PROPERTIES
+//@property(nonatomic, readonly) BOOL hasText;
+//#else
+//- (BOOL)hasText;
+//#endif
+//- (void)insertText:(NSString *)text;
+//- (void)deleteBackward;
+
+// API Suggestion
+/// 1. Replace former chracter and replace it instead of (void)deleteBackward; and (void)insertText:(NSString *)text;
+//  - (void)replaceText:(NSString *)text;
+/// 2. get range of former word range and replace it
+//  - (void)replaceText:(NSString *)text from(NSRange)range;
+//@end
+
+
+////////////////////////////////////////////////////////////
+/// Cursor should not be moved in below replace methods. ///
+////////////////////////////////////////////////////////////
+
+// [wSelf.textDocumentProxy replaceText:@"우"];
+- (void)replaceText:(NSString *)text {
+    [self.textDocumentProxy deleteBackward];
+    [self.textDocumentProxy insertText:@"우"];
+}
+
+//[textDocumentProxy replaceText:@"우우" from:2];
+- (void)replaceText:(NSString *)text from:(int)count {
+    for (int i = 1; i <= count; i++) {
+        [self.textDocumentProxy deleteBackward];
+    }
+    [self.textDocumentProxy insertText:@"우우"];
+}
+
+
     
-    
-    // Test word: 우원재
-    // Tset scenario: ㅇ -> 우 -> 웅 -> 우우 -> 우워 -> 우원 -> 우웑 -> 우원재
+// Test word: 우원재
+// Tset scenario: ㅇ -> 우 -> 웅 -> 우우 -> 우워 -> 우원 -> 우웑 -> 우원재
     const int64_t delaytime = 0.1; // When delay time is approximately longer than 1, it didn't happened. (However, Korean type speed is much shorter than 1)
     
 -(void)onTouchUpInsideAutoTestParticialButton:(id)sender {
@@ -148,6 +184,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [wSelf.textDocumentProxy insertText:@"ㅇ"];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaytime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [wSelf.textDocumentProxy replaceText:@"우"];
             [wSelf.textDocumentProxy deleteBackward];
             [wSelf.textDocumentProxy insertText:@"우"];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delaytime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
