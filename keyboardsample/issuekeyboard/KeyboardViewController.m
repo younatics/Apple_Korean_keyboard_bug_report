@@ -175,8 +175,8 @@
 
 
     
-// Test word: 우원재
-// Tset scenario: ㅇ -> 우 -> 웅 -> 우우 -> 우워 -> 우원 -> 우웑 -> 우원재
+    // Test word: 우원재
+    // Tset scenario: ㅇ -> 우 -> 웅 -> 우우 -> 우워 -> 우원 -> 우웑 -> 우원재
     const int64_t delaytime = 0.1; // When delay time is approximately longer than 1, it didn't happened. (However, Korean type speed is much shorter than 1)
     
 -(void)onTouchUpInsideAutoTestParticialButton:(id)sender {
